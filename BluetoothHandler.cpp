@@ -19,7 +19,7 @@ void error(const __FlashStringHelper*err) {
   while (1);
 }
 
-void startBluetooth()
+void MiniKeyboard::BluetoothHandler::startBluetooth()
 {
 
   if ( !ble.begin(VERBOSE_MODE) )
@@ -60,7 +60,7 @@ void startBluetooth()
   }
 }
 
-void endBluetooth(){
+void MiniKeyboard::BluetoothHandler::endBluetooth(){
 	ble.disconnect();
 }
 
@@ -91,6 +91,6 @@ void sendKeyStrokes()
   }
 }
 
-bool getBLEConnected(){
+bool MiniKeyboard::BluetoothHandler::getBLEConnected(){
 	return ble.isConnected();
 }
