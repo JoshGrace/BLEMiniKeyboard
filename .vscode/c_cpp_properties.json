@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceRoot}",
+                "/Applications/Arduino.app/hardware/tools",
+                "/Applications/Arduino.app/libraries",
+                "/Users/josh/Documents/Arduino/hardware/tools",
+                "/Users/josh/Documents/Arduino/libraries",
+                "/Users/josh/Documents/Arduino/libraries/Adafruit_BluefruitLE_nRF51-master"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceRoot}",
+                    "/Applications/Arduino.app/hardware/tools",
+                    "/Applications/Arduino.app/libraries",
+                    "/Users/josh/Documents/Arduino/hardware/tools",
+                    "/Users/josh/Documents/Arduino/libraries"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "intelliSenseMode": "clang-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
