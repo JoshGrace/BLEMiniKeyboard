@@ -54,70 +54,67 @@ using namespace MiniKeyboard;
   
   BluetoothHandler * bleHan;
 
-  void setup() { 
-    initPorts();
-    initKeyCodes();
-    //open the Serial output port
-    Serial.begin(9600);
-    // initialize HID Wired Keyboard control:
-    Keyboard.begin();
-    //MiniKeyboard::USBHandler han = MiniKeyboard::USBHandler();
-    //han.startUSBConnection();
-    bleHan = new BluetoothHandler();
-    bleHan->startBluetooth();
-    pinMode(13, OUTPUT);
-  }
-
-  void initKeyCodes(){
-    pressedKeys[0][0].keyName = "00";
-    pressedKeys[0][1].keyName = "01";
-    pressedKeys[0][2].keyName = "02";
-    pressedKeys[0][3].keyName = "03";
-    pressedKeys[1][0].keyName = "10";
-    pressedKeys[1][1].keyName = "11";
-    pressedKeys[1][2].keyName = "12";
-    pressedKeys[1][3].keyName = "13";
-    pressedKeys[2][0].keyName = "20";
-    pressedKeys[2][1].keyName = "21";
-    pressedKeys[2][2].keyName = "22";
-    pressedKeys[2][3].keyName = "23";
-    pressedKeys[3][0].keyName = "30";
-    pressedKeys[3][1].keyName = "31";
-    pressedKeys[3][2].keyName = "32";
-    pressedKeys[3][3].keyName = "33";
-  }
-
-  void initPorts(){// initialize the matrix inputs:
-    pinMode(verticalPort0, INPUT);
-    pinMode(verticalPort1, INPUT);
-    pinMode(verticalPort2, INPUT);
-    pinMode(verticalPort3, INPUT);
-    pinMode(horizontalPort0, INPUT);
-    pinMode(horizontalPort1, INPUT);
-    pinMode(horizontalPort2, INPUT);
-    pinMode(horizontalPort3, INPUT);
-    pinMode(prioritizeUSBPort, INPUT);
-    pinMode(isMacPort, INPUT);
-    pinMode(hotKeyDepthPort, INPUT);
-  }
-
-  void readKeys(){
-    for(int vertPort = 0; vertPort < sizeof(verticalPorts); vertPort++){
-      for(int horiPort = 0; horiPort < sizeof(horizontalPorts); horiPort++){
-        pressedKeys[vertPort][horiPort].pressed = (digitalRead(verticalPorts[vertPort]) == HIGH 
-            && digitalRead(horizontalPorts[horiPort]) == HIGH);
-      }
+    void setup() { 
+        initPorts();
+        initKeyCodes();
+        //open the Serial output port
+        Serial.begin(9600);
+        // initialize HID Wired Keyboard control:
+        Keyboard.begin();
+        //MiniKeyboard::USBHandler han = MiniKeyboard::USBHandler();
+        //han.startUSBConnection();
+        bleHan = new BluetoothHandler();
+        bleHan->startBluetooth();
+        pinMode(13, OUTPUT);
     }
-  }
 
-  void loop() {
-  
-    if(bleHan->getBLEConnected()){
-      //   // read through the keyboard matrix and if the required ports are on send the related keyboard command
-      digitalWrite(13, HIGH);
-    } else {
-      digitalWrite(13, LOW);
+    void initKeyCodes(){
+        pressedKeys[0][0].keyName = "00";
+        pressedKeys[0][1].keyName = "01";
+        pressedKeys[0][2].keyName = "02";
+        pressedKeys[0][3].keyName = "03";
+        pressedKeys[1][0].keyName = "10";
+        pressedKeys[1][1].keyName = "11";
+        pressedKeys[1][2].keyName = "12";
+        pressedKeys[1][3].keyName = "13";
+        pressedKeys[2][0].keyName = "20";
+        pressedKeys[2][1].keyName = "21";
+        pressedKeys[2][2].keyName = "22";
+        pressedKeys[2][3].keyName = "23";
+        pressedKeys[3][0].keyName = "30";
+        pressedKeys[3][1].keyName = "31";
+        pressedKeys[3][2].keyName = "32";
+        pressedKeys[3][3].keyName = "33";
     }
-      
-    //}
-  }
+
+    void initPorts(){// initialize the matrix inputs:
+        pinMode(verticalPort0, INPUT);
+        pinMode(verticalPort1, INPUT);
+        pinMode(verticalPort2, INPUT);
+        pinMode(verticalPort3, INPUT);
+        pinMode(horizontalPort0, INPUT);
+        pinMode(horizontalPort1, INPUT);
+        pinMode(horizontalPort2, INPUT);
+        pinMode(horizontalPort3, INPUT);
+        pinMode(prioritizeUSBPort, INPUT);
+        pinMode(isMacPort, INPUT);
+        pinMode(hotKeyDepthPort, INPUT);
+    }
+
+    void readKeys(){
+        for(int vertPort = 0; vertPort < sizeof(verticalPorts); vertPort++){
+            for(int horiPort = 0; horiPort < sizeof(horizontalPorts); horiPort++){
+                pressedKeys[vertPort][horiPort].pressed = (digitalRead(verticalPorts[vertPort]) == HIGH 
+                    && digitalRead(horizontalPorts[horiPort]) == HIGH);
+            }
+        }
+    }
+
+    void loop() {
+      if(bleHan->getBLEConnected()){
+          //   // read through the keyboard matrix and if the required ports are on send the related keyboard command
+          digitalWrite(13, HIGH);
+      } else {
+          digitalWrite(13, LOW);
+      } 
+    }

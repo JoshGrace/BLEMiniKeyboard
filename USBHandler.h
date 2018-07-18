@@ -4,7 +4,7 @@ namespace MiniKeyboard{
 	class USBHandler{
 	public:
       	USBHandler();                  // function called the default constructor
-	    bool getUSBConnected();
+		bool getUSBConnected();
 	    void startUSBConnection();
 	    void endUSBConnection();
 	    void sendKeyCode(char keyCode);
