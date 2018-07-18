@@ -19,49 +19,52 @@
 using namespace MiniKeyboard;
 
 
-  struct key{
+struct key{
     String keyName;
     String keyCode;
     bool pressed;
-  };
+};
 
-  // set the inputs for the keyboard matrix
-  const int verticalPort0 = 2;
-  const int verticalPort1 = 3;
-  const int verticalPort2 = 4;
-  const int verticalPort3 = 5;
-  const int horizontalPort0 = 6;
-  const int horizontalPort1 = 7;
-  const int horizontalPort2 = 8;
-  const int horizontalPort3 = 9;
-  const int prioritizeUSBPort = 10;
-  const int isMacPort = 11;
-  const int hotKeyDepthPort = 12;
+// set the inputs for the keyboard matrix
+const int verticalPort0 = 2;
+const int verticalPort1 = 3;
+const int verticalPort2 = 4;
+const int verticalPort3 = 5;
+const int horizontalPort0 = 6;
+const int horizontalPort1 = 7;
+const int horizontalPort2 = 8;
+const int horizontalPort3 = 9;
+const int prioritizeUSBPort = 10;
+const int isMacPort = 11;
+const int hotKeyDepthPort = 12;
 
-  int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
-  int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
+bool defaultToUSB;
 
-  key pressedKeys[4][4];
+int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
+int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
 
-  void initKeyCodes();
-  void initPorts();
-  void readKeys();
+key pressedKeys[4][4];
+
+void initKeyCodes();
+void initPorts();
+void readKeys();
   
-  BluetoothHandler * bleHan;
+BluetoothHandler * bleHan;
 
-    void setup() { 
-        initPorts();
-        initKeyCodes();
-        //open the Serial output port
-        Serial.begin(9600);
-        // initialize HID Wired Keyboard control:
-        Keyboard.begin();
-        //MiniKeyboard::USBHandler han = MiniKeyboard::USBHandler();
-        //han.startUSBConnection();
-        bleHan = new BluetoothHandler();
-        bleHan->startBluetooth();
-        pinMode(13, OUTPUT);
-    }
+void setup() { 
+    defaultToUSB = false;
+    initPorts();
+    initKeyCodes();
+    //open the Serial output port
+    Serial.begin(9600);
+    // initialize HID Wired Keyboard control:
+    Keyboard.begin();
+    //MiniKeyboard::USBHandler han = MiniKeyboard::USBHandler();
+    //han.startUSBConnection();
+    bleHan = new BluetoothHandler();
+    bleHan->startBluetooth();
+    pinMode(13, OUTPUT);
+}
 
     void initKeyCodes(){
         pressedKeys[0][0].keyName = "00";
@@ -105,11 +108,28 @@ using namespace MiniKeyboard;
         }
     }
 
-    void loop() {
-      if(bleHan->getBLEConnected()){
-          digitalWrite(13, HIGH);
-      } else {
-          digitalWrite(13, LOW);
-      } 
-      delay(250);
+void loop() {
+    if(defaultToUSB){
+        if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){
+            digitalWrite(13, HIGH);
+        } else {
+            if(bleHan->getBLEConnected()){
+                digitalWrite(13, HIGH);
+                delay(250);
+            }
+            digitalWrite(13, LOW);
+        }
+    } else {
+        if(bleHan->getBLEConnected()){
+            digitalWrite(13, HIGH);
+        } else {
+            if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){
+                digitalWrite(13, HIGH);
+                delay(250);
+            } 
+            digitalWrite(13, LOW);
+        } 
     }
+    
+    delay(250);
+}
