@@ -1,8 +1,6 @@
-#include <Arduino.h>
-#include <SPI.h>
 #include "USBHandler.h"
 #include "BluetoothHandler.h"
-#include "Keyboard.h"
+#include "KeyHandler.h"
 
 /*
   Keyboard layout is
@@ -17,13 +15,6 @@
 */
 
 using namespace MiniKeyboard;
-
-
-struct key{
-    String keyName;
-    String keyCode;
-    bool pressed;
-};
 
 // set the inputs for the keyboard matrix
 const int verticalPort0 = 2;
@@ -43,47 +34,28 @@ bool defaultToUSB;
 int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
 int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
 
-key pressedKeys[4][4];
+bool pressedKeys[4][4];
 
 void initKeyCodes();
 void initPorts();
 void readKeys();
   
 BluetoothHandler * bleHan;
+KeyHandler * keyHan;
 
 void setup() { 
     defaultToUSB = false;
     initPorts();
-    initKeyCodes();
     //open the Serial output port
     Serial.begin(9600);
     // initialize HID Wired Keyboard control:
-    Keyboard.begin();
-    //MiniKeyboard::USBHandler han = MiniKeyboard::USBHandler();
-    //han.startUSBConnection();
+    //Keyboard.begin();
+    keyHan = new KeyHandler();
     bleHan = new BluetoothHandler();
     bleHan->startBluetooth();
     pinMode(13, OUTPUT);
 }
 
-    void initKeyCodes(){
-        pressedKeys[0][0].keyName = "00";
-        pressedKeys[0][1].keyName = "01";
-        pressedKeys[0][2].keyName = "02";
-        pressedKeys[0][3].keyName = "03";
-        pressedKeys[1][0].keyName = "10";
-        pressedKeys[1][1].keyName = "11";
-        pressedKeys[1][2].keyName = "12";
-        pressedKeys[1][3].keyName = "13";
-        pressedKeys[2][0].keyName = "20";
-        pressedKeys[2][1].keyName = "21";
-        pressedKeys[2][2].keyName = "22";
-        pressedKeys[2][3].keyName = "23";
-        pressedKeys[3][0].keyName = "30";
-        pressedKeys[3][1].keyName = "31";
-        pressedKeys[3][2].keyName = "32";
-        pressedKeys[3][3].keyName = "33";
-    }
 
     void initPorts(){// initialize the matrix inputs:
         pinMode(verticalPort0, INPUT);
@@ -102,28 +74,30 @@ void setup() {
     void readKeys(){
         for(int vertPort = 0; vertPort < sizeof(verticalPorts); vertPort++){
             for(int horiPort = 0; horiPort < sizeof(horizontalPorts); horiPort++){
-                pressedKeys[vertPort][horiPort].pressed = (digitalRead(verticalPorts[vertPort]) == HIGH 
+                pressedKeys[vertPort][horiPort] = (digitalRead(verticalPorts[vertPort]) == HIGH 
                     && digitalRead(horizontalPorts[horiPort]) == HIGH);
             }
         }
+
     }
 
 void loop() {
-    if(defaultToUSB){
-        if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){
+    if(defaultToUSB){// if the user prefers USB
+        if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// checks if the voltage is over the maximum battery voltage
+                                                // implying that USB is connected
             digitalWrite(13, HIGH);
         } else {
-            if(bleHan->getBLEConnected()){
+            if(bleHan->getBLEConnected()){// if no USB then try bluetooth
                 digitalWrite(13, HIGH);
                 delay(250);
             }
             digitalWrite(13, LOW);
         }
-    } else {
-        if(bleHan->getBLEConnected()){
+    } else {// if the user prefers BLE
+        if(bleHan->getBLEConnected()){// check if BLE is actually connected
             digitalWrite(13, HIGH);
-        } else {
-            if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){
+        } else {//otherwise try BLE
+            if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// see earlier comment
                 digitalWrite(13, HIGH);
                 delay(250);
             } 

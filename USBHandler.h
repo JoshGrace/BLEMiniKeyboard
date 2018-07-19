@@ -1,5 +1,6 @@
 #ifndef USBHANDLER_H
 #define USBHANDLER_H
+#include "Keyboard.h"
 namespace MiniKeyboard{
 	class USBHandler{
 	public:

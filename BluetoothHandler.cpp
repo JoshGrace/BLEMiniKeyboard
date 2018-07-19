@@ -1,67 +1,54 @@
 #include "BluetoothHandler.h"
-#include <Arduino.h>
-#include <SPI.h>
-#include "Adafruit_BLE.h"
-#include "Adafruit_BluefruitLE_SPI.h"
-#include "Adafruit_BluefruitLE_UART.h"
 
-#define MINIMUM_FIRMWARE_VERSION    "0.6.6"
-
+using namespace MiniKeyboard;
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
 
-bool isBLEConnected;
-
-MiniKeyboard::BluetoothHandler::BluetoothHandler(){
-	isBLEConnected = false;
-}
+bool initialized = false;
 void error(const __FlashStringHelper*err) {
   Serial.println(err);
   while (1);
 }
 
-void MiniKeyboard::BluetoothHandler::startBluetooth()
-{
-
-  if ( !ble.begin(VERBOSE_MODE) )
-  {
-    error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
-  }
-
-  /* Disable command echo from Bluefruit */
-  ble.echo(false);
-
-  /* Print Bluefruit information */
-  ble.info();
-
-  /* Change the device name to make it easier to find */
-  Serial.println(F("Setting device name to 'Bluefruit Keyboard': "));
-  if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=Bluefruit Keyboard" )) ) {
-    error(F("Could not set device name?"));
-  }
-
-  /* Enable HID Service */
-  Serial.println(F("Enable HID Service (including Keyboard): "));
-  if ( ble.isVersionAtLeast(MINIMUM_FIRMWARE_VERSION) )
-  {
-    if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ))) {
+BluetoothHandler::BluetoothHandler(){
+  if(!initialized){
+    if ( !ble.begin(VERBOSE_MODE) ){
+      error(F("Couldn't find Bluefruit, make sure it's in CoMmanD mode & check wiring?"));
+    }
+    ble.echo(false); // Disable command echo from Bluefruit 
+    ble.info(); // Print Bluefruit information 
+    if (! ble.sendCommandCheckOK(F( "AT+GAPDEVNAME=Mini Keyboard" )) ){ // Change the device name to make it easier to find
+      error(F("Could not set device name?"));
+    }
+    if ( !ble.sendCommandCheckOK(F( "AT+HWMODELED=DISABLE" ))){ // Disable LED
+      error(F("Could not disable LED"));
+    }
+    if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=Off" ))){ // Enable HID Service 
       error(F("Could not enable Keyboard"));
     }
-  }else
-  {
-    if (! ble.sendCommandCheckOK(F( "AT+BleKeyboardEn=On"  ))) {
-      error(F("Could not enable Keyboard"));
+    if (! ble.reset() ) { //reset so changes work properly
+      error(F("Couldn't reset??"));
     }
-  }
-
-  /* Add or remove service requires a reset */
-  Serial.println(F("Performing a SW reset (service changes require a reset): "));
-  if (! ble.reset() ) {
-    error(F("Couldn't reset??"));
+    initialized = true;
   }
 }
 
-void MiniKeyboard::BluetoothHandler::endBluetooth(){
+
+void BluetoothHandler::startBluetooth()
+{
+  if(initialized){
+    //if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ))){ // Enable HID Service 
+    //  error(F("Could not enable Keyboard"));
+    //}
+    //if (! ble.reset() ) { //reset so changes work properly
+    //  error(F("Couldn't reset??"));
+    //}
+  }
+}
+
+void BluetoothHandler::endBluetooth(){
 	ble.disconnect();
+  ble.end();
+  initialized = false;
 }
 
 void sendKeyStrokes()
@@ -91,6 +78,6 @@ void sendKeyStrokes()
   }
 }
 
-bool MiniKeyboard::BluetoothHandler::getBLEConnected(){
+bool BluetoothHandler::getBLEConnected(){
 	return ble.isConnected();
 }

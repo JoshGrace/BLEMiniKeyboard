@@ -1,5 +1,11 @@
 #ifndef BLUETOOTHHANDLER_H
 #define BLUETOOTHHANDLER_H
+
+#include <SPI.h>
+#include "Adafruit_BLE.h"
+#include "Adafruit_BluefruitLE_SPI.h"
+#include "Adafruit_BluefruitLE_UART.h"
+
 // COMMON SETTINGS
 // ----------------------------------------------------------------------------------------------
 // These settings are used in both SW UART, HW UART and SPI mode
@@ -50,6 +56,7 @@ namespace MiniKeyboard{
 	class BluetoothHandler{
 	public:
 		BluetoothHandler();                  // function called the default constructor
+		~BluetoothHandler();
 		bool getBLEConnected();
 		void startBluetooth();
 		void endBluetooth();
