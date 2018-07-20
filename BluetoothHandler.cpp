@@ -22,8 +22,8 @@ BluetoothHandler::BluetoothHandler(){
     if ( !ble.sendCommandCheckOK(F( "AT+HWMODELED=DISABLE" ))){ // Disable LED
       error(F("Could not disable LED"));
     }
-    if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=Off" ))){ // Enable HID Service 
-      error(F("Could not enable Keyboard"));
+    if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ))){ // Enable HID Service 
+      error(F("Could not disable Keyboard"));
     }
     if (! ble.reset() ) { //reset so changes work properly
       error(F("Couldn't reset??"));
@@ -36,12 +36,13 @@ BluetoothHandler::BluetoothHandler(){
 void BluetoothHandler::startBluetooth()
 {
   if(initialized){
-    //if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ))){ // Enable HID Service 
-    //  error(F("Could not enable Keyboard"));
-    //}
-    //if (! ble.reset() ) { //reset so changes work properly
-    //  error(F("Couldn't reset??"));
-    //}
+  //   if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ))){ // Enable HID Service 
+  //    error(F("Could not enable Keyboard"));
+  //  }
+  //   if (! ble.reset() ) { //reset so changes work properly
+    
+  //    error(F("Couldn't reset??"));
+  //   }
   }
 }
 
@@ -51,31 +52,15 @@ void BluetoothHandler::endBluetooth(){
   initialized = false;
 }
 
-void sendKeyStrokes()
+void BluetoothHandler::sendKeyStrokes(String toSend)
 {
-  // Display prompt
-  Serial.print(F("keyboard > "));
-
-  // Check for user input and echo it back if anything was found
-  char keys[BUFSIZE+1];
-
-	keys[0] = '1';
-	keys[1] = '2';
-	keys[2] = '3';
-
-  Serial.print("\nSending ");
-  Serial.println(keys);
+  // ble.println(toSend);
 
   ble.print("AT+BleKeyboard=");
-  ble.println(keys);
+  ble.println('s');
 
-  if( ble.waitForOK() )
-  {
-    Serial.println( F("OK!") );
-  }else
-  {
-    Serial.println( F("FAILED!") );
-  }
+  ble.waitForOK();
+
 }
 
 bool BluetoothHandler::getBLEConnected(){

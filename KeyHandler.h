@@ -1,5 +1,6 @@
 #ifndef KEYHANDLER_H
 #define KEYHANDLER_H
+#include <Arduino.h>
 //#include <string>
 
 namespace MiniKeyboard{
@@ -8,8 +9,7 @@ namespace MiniKeyboard{
 		KeyHandler();                  // function called the default constructor
 		~KeyHandler();
 		void writePressedKeys(bool[4][4]);
-//		std::string getSelectedKeys();
-//std::string josh;
+		String getSelectedKeys();
 
 	private:
 

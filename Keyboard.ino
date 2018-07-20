@@ -34,7 +34,7 @@ bool defaultToUSB;
 int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
 int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
 
-bool pressedKeys[4][4];
+bool pressedKeys[4][4] = {{false, false, false, false}, {false, false, false, false}, {false, false, false, false}, {false, false, false, false}};
 
 void initKeyCodes();
 void initPorts();
@@ -72,36 +72,39 @@ void setup() {
     }
 
     void readKeys(){
-        for(int vertPort = 0; vertPort < sizeof(verticalPorts); vertPort++){
-            for(int horiPort = 0; horiPort < sizeof(horizontalPorts); horiPort++){
-                pressedKeys[vertPort][horiPort] = (digitalRead(verticalPorts[vertPort]) == HIGH 
-                    && digitalRead(horizontalPorts[horiPort]) == HIGH);
+        for(int vertPort = 0; vertPort < (sizeof(pressedKeys)/sizeof(pressedKeys)[vertPort]); vertPort++){
+            for(int horiPort = 0; horiPort < (sizeof(pressedKeys[vertPort])/sizeof(pressedKeys[vertPort][horiPort])); horiPort++){
+                pressedKeys[vertPort][horiPort] = false;// = (digitalRead(verticalPorts[vertPort]) == HIGH 
+                    //&& digitalRead(horizontalPorts[horiPort]) == HIGH);
             }
         }
-
+        pressedKeys[0][0] = true;
+        pressedKeys[2][3] = true;
+        keyHan->writePressedKeys(pressedKeys);
     }
 
 void loop() {
+    readKeys();
     if(defaultToUSB){// if the user prefers USB
         if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// checks if the voltage is over the maximum battery voltage
                                                 // implying that USB is connected
-            digitalWrite(13, HIGH);
+           // digitalWrite(13, HIGH);
         } else {
             if(bleHan->getBLEConnected()){// if no USB then try bluetooth
-                digitalWrite(13, HIGH);
+          ///      digitalWrite(13, HIGH);
                 delay(250);
             }
             digitalWrite(13, LOW);
         }
     } else {// if the user prefers BLE
         if(bleHan->getBLEConnected()){// check if BLE is actually connected
-            digitalWrite(13, HIGH);
+            bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
         } else {//otherwise try BLE
             if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// see earlier comment
-                digitalWrite(13, HIGH);
+              //  digitalWrite(13, HIGH);
                 delay(250);
             } 
-            digitalWrite(13, LOW);
+            //digitalWrite(13, HIGH);
         } 
     }
     
