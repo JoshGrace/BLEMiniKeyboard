@@ -1,26 +1,21 @@
 #include "USBHandler.h"
-#include "Keyboard.h"
 
-
-#if SOFTWARE_SERIAL_AVAILABLE
-  #include <SoftwareSerial.h>
-#endif
-
-MiniKeyboard::USBHandler::USBHandler(){
+using namespace MiniKeyboard;
+USBHandler::USBHandler(){
     
 }
-void startUSBConnection(){
+void USBHandler::startUSBConnection(){
     Keyboard.begin();
 }
-void endUSBConnection(){
-    //Keyboard.stop();
+void USBHandler::endUSBConnection(){
+   // Keyboard.stop();
 }
-void sendKeyCode(char keyCode) {
+void USBHandler::sendKeyCode(char keyCode) {
     Keyboard.write(keyCode);
 }
-void sendLines(String keyCode) {
+void USBHandler::sendKeyStrokes(String keyCode) {
     Keyboard.print(keyCode);
 }
-bool getUSBConnected(){
+bool USBHandler::getUSBConnected(){
 	return false;
 }

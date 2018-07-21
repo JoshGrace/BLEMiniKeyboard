@@ -30,9 +30,13 @@ const int isMacPort = 11;
 const int hotKeyDepthPort = 12;
 
 bool defaultToUSB;
+unsigned char switchSelections;
 
-int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
-int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
+enum ConnectionStatuses {USB, BLE, UNCONNECTED};
+ConnectionStatuses connectionStatus;
+
+const int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
+const int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
 
 bool pressedKeys[4][4] = {{false, false, false, false}, {false, false, false, false}, 
             {false, false, false, false}, {false, false, false, false}};
@@ -43,76 +47,89 @@ void readKeys();
   
 BluetoothHandler * bleHan;
 KeyHandler * keyHan;
+USBHandler * usbHan;
 
-void setup() { 
-    defaultToUSB = false;
+void setup() {
     initPorts();
+    connectionStatus = UNCONNECTED;
     //open the Serial output port
     Serial.begin(9600);
-    // initialize HID Wired Keyboard control:
-    //Keyboard.begin();
     keyHan = new KeyHandler();
     bleHan = new BluetoothHandler();
     bleHan->startBluetooth();
-    pinMode(13, OUTPUT);
+    usbHan = new USBHandler();
+    usbHan->startUSBConnection();
 }
 
 
-    void initPorts(){// initialize the matrix inputs:
-        pinMode(verticalPort0, INPUT);
-        pinMode(verticalPort1, INPUT);
-        pinMode(verticalPort2, INPUT);
-        pinMode(verticalPort3, INPUT);
-        pinMode(horizontalPort0, INPUT);
-        pinMode(horizontalPort1, INPUT);
-        pinMode(horizontalPort2, INPUT);
-        pinMode(horizontalPort3, INPUT);
-        pinMode(prioritizeUSBPort, INPUT);
-        pinMode(isMacPort, INPUT);
-        pinMode(hotKeyDepthPort, INPUT);
-    }
+void initPorts(){// initialize the matrix inputs:
+    pinMode(13, OUTPUT);
+    pinMode(verticalPort0, INPUT);
+    pinMode(verticalPort1, INPUT);
+    pinMode(verticalPort2, INPUT);
+    pinMode(verticalPort3, INPUT);
+    pinMode(horizontalPort0, INPUT);
+    pinMode(horizontalPort1, INPUT);
+    pinMode(horizontalPort2, INPUT);
+    pinMode(horizontalPort3, INPUT);
+    pinMode(prioritizeUSBPort, INPUT);
+    pinMode(isMacPort, INPUT);
+    pinMode(hotKeyDepthPort, INPUT);}
 
-    void readKeys(){
-        for(int vertPort = 0; vertPort < (sizeof(pressedKeys)/sizeof(pressedKeys)[vertPort]); vertPort++){
-            for(int horiPort = 0; horiPort < (sizeof(pressedKeys[vertPort])/sizeof(pressedKeys[vertPort][horiPort])); horiPort++){
-                pressedKeys[vertPort][horiPort] = false;// = (digitalRead(verticalPorts[vertPort]) == HIGH 
-                    //&& digitalRead(horizontalPorts[horiPort]) == HIGH);
-            }
+
+void readKeys(){
+    for(int vertPort = 0; vertPort < (sizeof(pressedKeys)/sizeof(pressedKeys)[vertPort]); vertPort++){
+        for(int horiPort = 0; horiPort < (sizeof(pressedKeys[vertPort])/sizeof(pressedKeys[vertPort][horiPort])); horiPort++){
+            pressedKeys[vertPort][horiPort] = false;// = (digitalRead(verticalPorts[vertPort]) == HIGH 
+                //&& digitalRead(horizontalPorts[horiPort]) == HIGH);
         }
-        pressedKeys[0][0] = true;
-        pressedKeys[2][3] = true;
-        keyHan->writePressedKeys(pressedKeys);
     }
-
-void loop() {
-    unsigned char selection = 0;
-    selection += false;
-    selection = selection << 1;
-    selection += true;
-    keyHan->selectKeyNames(selection);
-    readKeys();
+    pressedKeys[0][0] = true;
+    pressedKeys[2][3] = true;
+    keyHan->writePressedKeys(pressedKeys);
+}
+void readUserSwitches(){
+    switchSelections = 0;
+    switchSelections += false;
+    switchSelections = switchSelections << 1;
+    switchSelections += true;
+    keyHan->selectKeyNames(switchSelections);
+    defaultToUSB = false;
+}
+void readConnectionStatus(){
     if(defaultToUSB){// if the user prefers USB
-        if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// checks if the voltage is over the maximum battery voltage
-                                                // implying that USB is connected
-           // digitalWrite(13, HIGH);
+        if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// checks if the voltage is over the maximum battery voltage implying that USB is connected
+            connectionStatus = USB;
         } else {
             if(bleHan->getBLEConnected()){// if no USB then try bluetooth
-          ///      digitalWrite(13, HIGH);
-                delay(250);
+                connectionStatus = BLE;
+            } else {
+                connectionStatus = UNCONNECTED;
             }
-            digitalWrite(13, LOW);
         }
     } else {// if the user prefers BLE
         if(bleHan->getBLEConnected()){// check if BLE is actually connected
-            //bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
-        } else {//otherwise try BLE
+            connectionStatus = BLE;
+        } else {//otherwise try USB
             if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// see earlier comment
-              //  digitalWrite(13, HIGH);
-                delay(250);
-            } 
-            //digitalWrite(13, HIGH);
+                connectionStatus = USB;
+            } else {
+                connectionStatus = UNCONNECTED;
+            }
         } 
     }
-    
-    delay(250);
+}
+void loop() {
+    readUserSwitches();
+    readKeys();
+    readConnectionStatus();
+    switch(connectionStatus){
+        case USB:
+            usbHan->sendKeyStrokes(keyHan->getSelectedKeys());
+        break;
+        case BLE:
+            bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
+        break;
+    }
+    delay(1000);
 }
