@@ -44,7 +44,11 @@ bool pressedKeys[4][4] = {{false, false, false, false}, {false, false, false, fa
 void initKeyCodes();
 void initPorts();
 void readKeys();
-  
+void readUserSwitches();
+void readConnectionStatus();
+void writeKeys();
+void writeConnectionStatusToLEDs();
+
 BluetoothHandler * bleHan;
 KeyHandler * keyHan;
 USBHandler * usbHan;
@@ -62,6 +66,16 @@ void setup() {
 }
 
 
+void loop() {
+    readUserSwitches();
+    readKeys();
+    readConnectionStatus();
+    writeConnectionStatusToLEDs();
+    writeKeys();
+
+    delay(1000);
+}
+
 void initPorts(){// initialize the matrix inputs:
     pinMode(13, OUTPUT);
     pinMode(verticalPort0, INPUT);
@@ -74,28 +88,29 @@ void initPorts(){// initialize the matrix inputs:
     pinMode(horizontalPort3, INPUT);
     pinMode(prioritizeUSBPort, INPUT);
     pinMode(isMacPort, INPUT);
-    pinMode(hotKeyDepthPort, INPUT);}
-
+    pinMode(hotKeyDepthPort, INPUT);
+}
 
 void readKeys(){
     for(int vertPort = 0; vertPort < (sizeof(pressedKeys)/sizeof(pressedKeys)[vertPort]); vertPort++){
         for(int horiPort = 0; horiPort < (sizeof(pressedKeys[vertPort])/sizeof(pressedKeys[vertPort][horiPort])); horiPort++){
-            pressedKeys[vertPort][horiPort] = false;// = (digitalRead(verticalPorts[vertPort]) == HIGH 
-                //&& digitalRead(horizontalPorts[horiPort]) == HIGH);
+            pressedKeys[vertPort][horiPort] = (digitalRead(verticalPorts[vertPort]) == HIGH && digitalRead(horizontalPorts[horiPort]) == HIGH);
         }
     }
     pressedKeys[0][0] = true;
     pressedKeys[2][3] = true;
     keyHan->writePressedKeys(pressedKeys);
 }
+
 void readUserSwitches(){
     switchSelections = 0;
     switchSelections += false;
     switchSelections = switchSelections << 1;
-    switchSelections += true;
+    switchSelections += false;
     keyHan->selectKeyNames(switchSelections);
     defaultToUSB = false;
 }
+
 void readConnectionStatus(){
     if(defaultToUSB){// if the user prefers USB
         if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// checks if the voltage is over the maximum battery voltage implying that USB is connected
@@ -119,17 +134,28 @@ void readConnectionStatus(){
         } 
     }
 }
-void loop() {
-    readUserSwitches();
-    readKeys();
-    readConnectionStatus();
+
+void writeKeys(){
     switch(connectionStatus){
         case USB:
             usbHan->sendKeyStrokes(keyHan->getSelectedKeys());
-        break;
+        	break;
         case BLE:
             bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
-        break;
+        	break;
     }
-    delay(1000);
+}
+
+void writeConnectionStatusToLEDs(){
+    switch(connectionStatus){
+        case USB:
+    		digitalWrite(13, HIGH);
+        	break;
+        case BLE:
+    		digitalWrite(13, HIGH);
+        	break;
+		case UNCONNECTED:
+			digitalWrite(13, LOW);
+			break;
+	}
 }
