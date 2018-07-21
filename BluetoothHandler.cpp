@@ -57,7 +57,7 @@ void BluetoothHandler::sendKeyStrokes(String toSend)
   // ble.println(toSend);
 
   ble.print("AT+BleKeyboard=");
-  ble.println('s');
+  ble.println(toSend);
 
   ble.waitForOK();
 

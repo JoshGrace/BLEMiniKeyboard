@@ -34,7 +34,8 @@ bool defaultToUSB;
 int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
 int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
 
-bool pressedKeys[4][4] = {{false, false, false, false}, {false, false, false, false}, {false, false, false, false}, {false, false, false, false}};
+bool pressedKeys[4][4] = {{false, false, false, false}, {false, false, false, false}, 
+            {false, false, false, false}, {false, false, false, false}};
 
 void initKeyCodes();
 void initPorts();
@@ -84,6 +85,11 @@ void setup() {
     }
 
 void loop() {
+    unsigned char selection = 0;
+    selection += false;
+    selection = selection << 1;
+    selection += true;
+    keyHan->selectKeyNames(selection);
     readKeys();
     if(defaultToUSB){// if the user prefers USB
         if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// checks if the voltage is over the maximum battery voltage
@@ -98,7 +104,7 @@ void loop() {
         }
     } else {// if the user prefers BLE
         if(bleHan->getBLEConnected()){// check if BLE is actually connected
-            bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
+            //bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
         } else {//otherwise try BLE
             if(analogRead(A9) * 2 * 3.3 / 1024 > 4.22){// see earlier comment
               //  digitalWrite(13, HIGH);

@@ -10,7 +10,7 @@ namespace MiniKeyboard{
 		~KeyHandler();
 		void writePressedKeys(bool[4][4]);
 		String getSelectedKeys();
-
+		void selectKeyNames(unsigned char choice);
 	private:
 
 	};
