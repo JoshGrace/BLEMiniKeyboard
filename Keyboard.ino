@@ -19,14 +19,14 @@
 using namespace MiniKeyboard;
 
 // set the inputs for the keyboard matrix
-const int verticalPort0 = 2;
-const int verticalPort1 = 3;
-const int verticalPort2 = 4;
-const int verticalPort3 = 5;
-const int horizontalPort0 = 6;
-const int horizontalPort1 = 7;
-const int horizontalPort2 = 8;
-const int horizontalPort3 = 9;
+const int rowPort0 = 2;
+const int rowPort1 = 3;
+const int rowPort2 = 4;
+const int rowPort3 = 5;
+const int columnPort0 = 6;
+const int columnPort1 = 7;
+const int columnPort2 = 8;
+const int columnPort3 = 9;
 const int prioritizeUSBPort = 10;
 const int isMacPort = 11;
 const int hotKeyDepthPort = 12;
@@ -37,8 +37,8 @@ unsigned char switchSelections;
 enum ConnectionStatuses {USB, BLE, UNCONNECTED};
 ConnectionStatuses connectionStatus;
 
-const int verticalPorts [] = {verticalPort0, verticalPort1, verticalPort2, verticalPort3};
-const int horizontalPorts [] = {horizontalPort0, horizontalPort1, horizontalPort2, horizontalPort3};
+const int rowPorts [NUMBEROFKEYROWS] = {rowPort0, rowPort1, rowPort2, rowPort3};
+const int columnPorts [NUMBEROFKEYCOLUMNS] = {columnPort0, columnPort1, columnPort2, columnPort3};
 
 bool pressedKeys[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS] = {{false, false, false, false}, {false, false, false, false}, 
             {false, false, false, false}, {false, false, false, false}};
@@ -77,23 +77,23 @@ void loop() {
 
 void initPorts(){// initialize the matrix inputs:
     pinMode(13, OUTPUT);
-    pinMode(verticalPort0, INPUT);
-    pinMode(verticalPort1, INPUT);
-    pinMode(verticalPort2, INPUT);
-    pinMode(verticalPort3, INPUT);
-    pinMode(horizontalPort0, INPUT);
-    pinMode(horizontalPort1, INPUT);
-    pinMode(horizontalPort2, INPUT);
-    pinMode(horizontalPort3, INPUT);
+    pinMode(rowPort0, INPUT);
+    pinMode(rowPort1, INPUT);
+    pinMode(rowPort2, INPUT);
+    pinMode(rowPort3, INPUT);
+    pinMode(columnPort0, INPUT);
+    pinMode(columnPort1, INPUT);
+    pinMode(columnPort2, INPUT);
+    pinMode(columnPort3, INPUT);
     pinMode(prioritizeUSBPort, INPUT);
     pinMode(isMacPort, INPUT);
     pinMode(hotKeyDepthPort, INPUT);
 }
 
 void readKeys(){
-    for(int vertPort = 0; vertPort < (sizeof(pressedKeys)/sizeof(pressedKeys)[vertPort]); vertPort++){
-        for(int horiPort = 0; horiPort < (sizeof(pressedKeys[vertPort])/sizeof(pressedKeys[vertPort][horiPort])); horiPort++){
-            pressedKeys[vertPort][horiPort] = false;//(digitalRead(verticalPorts[vertPort]) == HIGH && digitalRead(horizontalPorts[horiPort]) == HIGH);
+    for(int row = 0; row < NUMBEROFKEYROWS; row++){
+        for(int column = 0; column < NUMBEROFKEYCOLUMNS; column++){
+            pressedKeys[row][column] = false;//(digitalRead(verticalPorts[vertPort]) == HIGH && digitalRead(horizontalPorts[horiPort]) == HIGH);
         }
     }
     pressedKeys[0][0] = true;
