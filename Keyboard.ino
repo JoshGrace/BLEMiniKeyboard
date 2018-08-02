@@ -48,6 +48,7 @@ void readKeys();
 void readUserSwitches();
 void readConnectionStatusBLE();
 void readConnectionStatusUSB();
+void readPreferedConnection();
 void writeKeys();
 void (*readConnectionStatus)();
 BluetoothHandler * bleHan;
@@ -69,7 +70,8 @@ void setup() {
 void loop() {
     readUserSwitches();
     readKeys();
-    readConnectionStatus();
+	readPreferedConnection();
+    (*readConnectionStatus)();
     writeKeys();
 
     delay(1000);
@@ -100,6 +102,14 @@ void readKeys(){
     keyHan->writePressedKeys(pressedKeys);
 }
 
+void readPreferedConnection(){
+	if(defaultToUSB){
+		readConnectionStatus = readConnectionStatusUSB;
+	} else {
+		readConnectionStatus = readConnectionStatusBLE;
+	}
+}
+
 void readUserSwitches(){
     switchSelections = 0;
     switchSelections += false;// mac or windows
@@ -122,7 +132,9 @@ void readConnectionStatusUSB(){
 }
 
 void readConnectionStatusBLE(){
+    
 	if(bleHan->getBLEConnected()){// check if BLE is actually connected
+       // digitalWrite(13, HIGH);
 		connectionStatus = BLE;
 	} else {//otherwise try USB
 		if(analogRead(A9) * 2 * 3.3 / 1024 > USBVoltage){// see earlier comment
@@ -137,15 +149,15 @@ void readConnectionStatusBLE(){
 void writeKeys(){
     switch(connectionStatus){
         case USB:
-            usbHan->sendKeyStrokes(keyHan->getSelectedKeys());
+           // usbHan->sendKeyStrokes(keyHan->getSelectedKeys());
 			digitalWrite(13, HIGH);
         	break;
         case BLE:
-            bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
+            //bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
 			digitalWrite(13, HIGH);
         	break;
 		case UNCONNECTED:
-			digitalWrite(13, LOW);
+			//digitalWrite(13, LOW);
 			break;
     }
 }
