@@ -98,7 +98,7 @@ void readKeys(){
             pressedKeys[row][column] = false;//(digitalRead(verticalPorts[vertPort]) == HIGH && digitalRead(horizontalPorts[horiPort]) == HIGH);
         }
     }
-    pressedKeys[0][0] = true;
+    pressedKeys[0][1] = true;
     keyHan->writePressedKeys(pressedKeys);
 }
 
@@ -134,7 +134,6 @@ void readConnectionStatusUSB(){
 void readConnectionStatusBLE(){
     
 	if(bleHan->getBLEConnected()){// check if BLE is actually connected
-       // digitalWrite(13, HIGH);
 		connectionStatus = BLE;
 	} else {//otherwise try USB
 		if(analogRead(A9) * 2 * 3.3 / 1024 > USBVoltage){// see earlier comment
@@ -143,21 +142,20 @@ void readConnectionStatusBLE(){
 			connectionStatus = UNCONNECTED;
 		}
 	} 
-	
 }
 
 void writeKeys(){
     switch(connectionStatus){
         case USB:
-           // usbHan->sendKeyStrokes(keyHan->getSelectedKeys());
-			digitalWrite(13, HIGH);
+            usbHan->sendKeyStrokes(keyHan->getSelectedKeys());
+//			digitalWrite(13, HIGH);
         	break;
         case BLE:
-            //bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
-			digitalWrite(13, HIGH);
+            bleHan->sendKeyStrokes(keyHan->getSelectedKeys());
+//			digitalWrite(13, HIGH);
         	break;
 		case UNCONNECTED:
-			//digitalWrite(13, LOW);
+			digitalWrite(13, LOW);
 			break;
     }
 }

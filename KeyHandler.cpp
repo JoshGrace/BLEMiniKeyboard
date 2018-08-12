@@ -1,8 +1,12 @@
 #include "KeyHandler.h"
 
 using namespace MiniKeyboard;
-
-String keyNamesMac1[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS] = {{"200","201","202","203"}, {"210","211","212","213"}, {"220","221","222","223"}, {"230","231","232","233"}};
+//Ç = command
+//∂ = option
+//Ç = left arrow
+//® = control
+//¥ = fn
+String keyNamesMac1[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS] = {{"πa","∂Ç","202","203"}, {"210","211","212","213"}, {"220","221","222","223"}, {"230","231","232","233"}};
 String keyNamesMac2[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS] = {{"300","301","302","303"}, {"310","311","312","313"}, {"320","321","322","323"}, {"330","331","332","333"}};
 String keyNamesWindows1[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS] = {{"000","001","002","003"}, {"010","011","012","013"}, {"020","021","022","023"}, {"030","031","032","033"}};
 String keyNamesWindows2[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS] = {{"100","101","102","103"}, {"110","111","112","113"}, {"120","121","122","123"}, {"130","131","132","133"}};
