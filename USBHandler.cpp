@@ -37,10 +37,15 @@ void USBHandler::sendKeyStrokes(String keyCode) {
                     break;// only break if the key is found otherwise let the switch statement fall the the default case
                             // to be dealt with2 as a normal key
                 }
-            case -62://option ®
-                if(i + 1 < keyCode.length() && ((int)keyCode.charAt(i+1)) == -82){
-                     Keyboard.press(KEY_LEFT_ALT);
-                    digitalWrite(13, HIGH);
+            case -62://option ® / shift ¥
+                if(i + 1 < keyCode.length() && ((int)keyCode.charAt(i+1)) == -82){// ®
+                    Keyboard.press(KEY_LEFT_ALT);
+                    i++;
+                    break;// only break if the key is found otherwise let the switch statement fall the the default case
+                            // to be dealt with2 as a normal key
+                }
+                if(i + 1 < keyCode.length() && ((int)keyCode.charAt(i+1)) == -91){// ¥
+                    Keyboard.press(KEY_LEFT_SHIFT);
                     i++;
                     break;// only break if the key is found otherwise let the switch statement fall the the default case
                             // to be dealt with2 as a normal key
