@@ -14,12 +14,36 @@ void USBHandler::endUSBConnection(){
 void USBHandler::sendKeyStrokes(String keyCode) {
     for(int i = 0; i < keyCode.length(); i++){
         switch((int)keyCode.charAt(i)){
-             case -49:
+            case -49://command π
                 if(i + 1 < keyCode.length() && ((int)keyCode.charAt(i+1)) == -128){
                     Keyboard.press(KEY_LEFT_GUI);
                     i++;
                     break;// only break if the key is found otherwise let the switch statement fall the the default case
-                            // to be dealt with as a normal key
+                            // to be dealt with2 as a normal key
+                }
+            case -30://control ∂
+                if(i + 1 < keyCode.length() && ((int)keyCode.charAt(i+1)) == -120){
+                    if(i + 2 < keyCode.length() && ((int)keyCode.charAt(i+2)) == -126){
+                        Keyboard.press(KEY_LEFT_CTRL);
+                        i += 2;
+                        break;// only break if the key is found otherwise let the switch statement fall the the default case
+                                // to be dealt with as a normal key
+                    }
+                }
+            case -61://left arrow Ç
+                if(i + 1 < keyCode.length() && ((int)keyCode.charAt(i+1)) == -121){
+                    Keyboard.press(KEY_LEFT_ARROW);
+                    i++;
+                    break;// only break if the key is found otherwise let the switch statement fall the the default case
+                            // to be dealt with2 as a normal key
+                }
+            case -62://option ®
+                if(i + 1 < keyCode.length() && ((int)keyCode.charAt(i+1)) == -82){
+                     Keyboard.press(KEY_LEFT_ALT);
+                    digitalWrite(13, HIGH);
+                    i++;
+                    break;// only break if the key is found otherwise let the switch statement fall the the default case
+                            // to be dealt with2 as a normal key
                 }
             default:
                 Keyboard.press(keyCode.charAt(i));
