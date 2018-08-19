@@ -98,7 +98,7 @@ void readKeys(){
             pressedKeys[row][column] = false;//(digitalRead(verticalPorts[vertPort]) == HIGH && digitalRead(horizontalPorts[horiPort]) == HIGH);
         }
     }
-    pressedKeys[0][1] = true;
+    pressedKeys[0][3] = true;
     keyHan->writePressedKeys(pressedKeys);
 }
 
