@@ -33,7 +33,7 @@ BluetoothHandler::BluetoothHandler(){
 }
 
 
-void BluetoothHandler::startBluetooth()
+void BluetoothHandler::startConnection()
 {
   if(initialized){
   //   if ( !ble.sendCommandCheckOK(F( "AT+BleHIDEn=On" ))){ // Enable HID Service 
@@ -46,13 +46,13 @@ void BluetoothHandler::startBluetooth()
   }
 }
 
-void BluetoothHandler::endBluetooth(){
+void BluetoothHandler::endConnection(){
 	ble.disconnect();
   ble.end();
   initialized = false;
 }
 
-void BluetoothHandler::sendKeyStrokes(String toSend)
+void BluetoothHandler::sendKeyStrokes(String keyCode)
 {
   // for(int i = 0; i < keyCode.length(); i++){
   //       switch((int)keyCode.charAt(i)){
@@ -112,6 +112,6 @@ void BluetoothHandler::sendKeyStrokes(String toSend)
   // ble.waitForOK();4
 }
 
-bool BluetoothHandler::getBLEConnected(){
+bool BluetoothHandler::getConnected(){
 	return ble.isConnected();
 }

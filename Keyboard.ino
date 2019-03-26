@@ -1,8 +1,4 @@
-#include "USBHandler.h"
-#include "BluetoothHandler.h"
-#include "KeyHandler.h"
-
-#define USBVoltage 4.22
+#include "Keyboard_INO.h"
 
 /*
   Keyboard layout is
@@ -16,20 +12,7 @@
          |verticalPort2 
 */
 
-using namespace MiniKeyboard;
-
 // set the inputs for the keyboard matrix
-const int rowPort0 = 2;
-const int rowPort1 = 3;
-const int rowPort2 = 4;
-const int rowPort3 = 5;
-const int columnPort0 = 6;
-const int columnPort1 = 7;
-const int columnPort2 = 8;
-const int columnPort3 = 9;
-const int prioritizeUSBPort = 10;
-const int isMacPort = 11;
-const int hotKeyDepthPort = 12;
 
 bool defaultToUSB;
 unsigned char switchSelections;
@@ -43,14 +26,6 @@ const int columnPorts [NUMBEROFKEYCOLUMNS] = {columnPort0, columnPort1, columnPo
 bool pressedKeys[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS] = {{false, false, false, false}, {false, false, false, false}, 
             {false, false, false, false}, {false, false, false, false}};
 
-void initPorts();
-void readKeys();
-void readUserSwitches();
-void readConnectionStatusBLE();
-void readConnectionStatusUSB();
-void readPreferedConnection();
-void writeKeys();
-void (*readConnectionStatus)();
 BluetoothHandler * bleHan;
 KeyHandler * keyHan;
 USBHandler * usbHan;
@@ -61,9 +36,9 @@ void setup() {
     Serial.begin(9600);
     keyHan = new KeyHandler();
     bleHan = new BluetoothHandler();
-    bleHan->startBluetooth();
+    bleHan->startConnection();
     usbHan = new USBHandler();
-    usbHan->startUSBConnection();
+    usbHan->startConnection();
 }
 
 
@@ -73,7 +48,6 @@ void loop() {
 	readPreferedConnection();
     (*readConnectionStatus)();
     writeKeys();
-
     delay(1000);
 }
 
@@ -123,7 +97,7 @@ void readConnectionStatusUSB(){
 	if(analogRead(A9) * 2 * 3.3 / 1024 > USBVoltage){// checks if the voltage is over the maximum battery voltage implying that USB is connected
 		connectionStatus = USB;
 	} else {
-		if(bleHan->getBLEConnected()){// if no USB then try bluetooth
+		if(bleHan->getConnected()){// if no USB then try bluetooth
 			connectionStatus = BLE;
 		} else {
 			connectionStatus = UNCONNECTED;
@@ -133,7 +107,7 @@ void readConnectionStatusUSB(){
 
 void readConnectionStatusBLE(){
     
-	if(bleHan->getBLEConnected()){// check if BLE is actually connected
+	if(bleHan->getConnected()){// check if BLE is actually connected
 		connectionStatus = BLE;
 	} else {//otherwise try USB
 		if(analogRead(A9) * 2 * 3.3 / 1024 > USBVoltage){// see earlier comment

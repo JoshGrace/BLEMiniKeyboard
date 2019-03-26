@@ -3,6 +3,7 @@
         {
             "name": "Mac",
             "includePath": [
+                "/Users/joshgrace/Library/Arduino15/packages/adafruit/hardware/avr/1.4.13/**",
                 "${workspaceRoot}",
                 "/Applications/Arduino.app/hardware/tools",
                 "/Applications/Arduino.app/libraries",
@@ -22,7 +23,8 @@
             },
             "intelliSenseMode": "clang-x64",
             "cStandard": "c11",
-            "cppStandard": "c++17"
+            "cppStandard": "c++17",
+            "forcedInclude": []
         }
     ],
     "version": 4

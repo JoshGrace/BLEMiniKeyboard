@@ -5,9 +5,9 @@ namespace MiniKeyboard{
 	class USBHandler{
 		public:
       		USBHandler();                  // function called the default constructor
-			bool getUSBConnected();
-	    	void startUSBConnection();
-	    	void endUSBConnection();
+			bool getConnected();
+	    	void startConnection();
+	    	void endConnection();
 	    	void sendKeyCode(char keyCode);
 		    void sendKeyStrokes(String keyCode);
 		private:	

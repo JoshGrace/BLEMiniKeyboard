@@ -31,7 +31,6 @@ void KeyHandler::selectKeyNames(unsigned char choice){
 			memcpy(keyNames, keyNamesWindows2, sizeof(keyNamesWindows2));
         	break;
     }
-
 }
 
 void KeyHandler::writePressedKeys(bool pressedKeys[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS]){

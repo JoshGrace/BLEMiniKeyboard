@@ -5,10 +5,10 @@ using namespace MiniKeyboard;
 USBHandler::USBHandler(){
     
 }
-void USBHandler::startUSBConnection(){
+void USBHandler::startConnection(){
     Keyboard.begin();
 }
-void USBHandler::endUSBConnection(){
+void USBHandler::endConnection(){
    // Keyboard.stop();
 }
 void USBHandler::sendKeyStrokes(String keyCode) {
@@ -59,6 +59,6 @@ void USBHandler::sendKeyStrokes(String keyCode) {
     delay(1);
     Keyboard.releaseAll();
 }
-bool USBHandler::getUSBConnected(){
+bool USBHandler::getConnected(){
 	return false;
 }
