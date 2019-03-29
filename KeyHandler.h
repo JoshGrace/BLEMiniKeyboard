@@ -4,16 +4,16 @@
 #include <Arduino.h>
 
 #define NUMBEROFKEYROWS 4 // number of key rows on the keyboard
-#define NUMBEROFKEYCOLUMNS 4// number of key columns on the keyboard
+#define NUMBEROFKEYCOLUMNS 4// number of key columns on the MiniKeyboard
 
 namespace MiniKeyboard{
+
 	class KeyHandler{
 		public:
-			KeyHandler();                  // function called the default constructor
+			KeyHandler();
 			~KeyHandler();
-			void writePressedKeys(bool[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS]);
-			String getSelectedKeys();
-			void selectKeyNames(unsigned char choice);
+			char **getPressedKeyCodes(bool[NUMBEROFKEYROWS][NUMBEROFKEYCOLUMNS], char**);
+			void selectKeyNames(short choice);
 		private:
 
 	};

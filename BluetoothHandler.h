@@ -58,10 +58,9 @@ namespace MiniKeyboard{
 		BluetoothHandler();                  // function called the default constructor
 		~BluetoothHandler();
 		bool getConnected();
-		void sendKeyStrokes(String);
+		void sendKeyStrokes(char **);
 		void startConnection();
 		void endConnection();
-
 
 	private:
 

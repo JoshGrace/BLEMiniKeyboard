@@ -8,8 +8,8 @@ namespace MiniKeyboard{
 			bool getConnected();
 	    	void startConnection();
 	    	void endConnection();
-	    	void sendKeyCode(char keyCode);
-		    void sendKeyStrokes(String keyCode);
+	    	void sendKeyCode(char );
+		    void sendKeyStrokes(char **);
 		private:	
 	};
 }

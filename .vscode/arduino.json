@@ -1,5 +1,5 @@
 {
     "sketch": "Keyboard.ino",
     "board": "adafruit:avr:feather32u4",
-    "port": "/dev/cu.usbmodem1411"
+    "port": "/dev/cu.usbmodemHIDPC1"
 }
